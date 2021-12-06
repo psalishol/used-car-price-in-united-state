@@ -298,10 +298,8 @@ def update_model(selected_co):
         v_make.append(make[0])
         color.append(make[1])
         V_price.append(price)
-
     #Plotting the bar plot for showing the make and price 
     fig = px.bar(x=v_make, y=V_price,color=color, title='Vehicle Make with the price')
-    
     return fig
 
 # Updates pieplot----> fix
