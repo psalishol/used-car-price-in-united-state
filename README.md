@@ -4,7 +4,12 @@
 
 
 ## Introduction to the Project
-This project aim to build a model that predicts the average price one can sell or buy different models of Cars in the United State.As part of the project is Web app development integrated with the model, which allows user to input their car specifications, and then the model can esimate the amount it can be sold in different state they might be in the United state.
+This project aim to build a model that predicts the average price one can sell or buy different models of Cars in the United State.
+
+Suppose a car owner wants to sell his car but then he wants to know the estimated price the car can be sold without  having to go to a dealership shop. he can use the model built to check the price which will return the average price of the car with the inputed features. 
+
+To make user have the feel of the project, a website will be built and deployed with heroku, the website will have webpage for the prediction, and also another webpage for dashboard, where user can check vehicle data for a specific make and also compare the features of the Make with price.
+
 
 Project Folder Organization
 ------------
@@ -70,3 +75,5 @@ The crucial part of this project is the data collection. To collect the data for
 **Info collected:** model_name/year, mpg, mileage, transmission_type, enginesize, seller_info/location, fueltype, drivetraintype, features, and price.
 
 Check link to script [here](https://github.com/psalishol/Car-price-in-United-state/tree/main/data_collection)
+
+
