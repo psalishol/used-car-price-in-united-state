@@ -302,28 +302,26 @@ def update_model(selected_co):
     fig = px.bar(x=v_make, y=V_price,color=color, title='Vehicle Make with the price')
     return fig
 
-# Updates pieplot----> fix
-# @app.callback(Output(component_id="pie-plot-graph",component_property="figure"),
-#               Input(component_id="dropdown_make",component_property="value"))
-# def update_pie_plot(selected_make):
-#     #This plot shows city whose price for a selected Vehicle Make is relatively high and seller can get huge amount from selling
-#     data_filtered = data_[data_["Vehicle Make"] == selected_make]
+
+# Making the plot showing all makes and preferred feature
+@app.callback(Output(component_id="make_price",component_property="figure"),
+              Input(component_id="dropdown_comp",component_property="value")) 
+def update_pie_plot(selected_make):
+    # Making the filtered data
+    data_filtered = data_.groupby("Vehicle Make",selected_make)["price"].mean()
+    selected = []   # Collects the selected feature for each price and make
+    make = []      # Collects the make for each selected feature and price
+    price = []    # Collects the mean price for each make and selected features
+    data_dict = data_filtered.to_dict()
+    for keys,values in zip(data_dict.keys(),data_dict.values()):
+        make.append(keys[0])
+        selected.append(keys[1])
+        price.append(values)
+
     
-#     # Grouping by city 
-#     city_grouped = data_filtered.groupby("City")["price"].mean()
-#     # Making a bew 
-#     #Using plotly express for plotting the pie plot
-#     fig = px.pie(names=city_grouped.index, values=city_grouped.values, title=f"{selected_make} in Each city")
-#     return fig
+    fig = px.bar(x=make, y=price, color=selected)
+    return fig
 
-
-# @app.callback(Output(component_id="",component_property=""),
-#               [Input(component_id="dropdown_make",component_property="value")])
-# def update_graph(vehicle_make):
-#     filteredd_df = data_[data_["Vehicle Make"] == vehicle_make]
-#     # Making index and value for the plot
-#     index = filteredd_df.groupby("")
-#     fig = px.scatter()
 
 if __name__ == '__main__':
     app.run_server(debug=True)
