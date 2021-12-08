@@ -156,14 +156,30 @@ app.layout = html.Div(
             ]
         ),
     
-        # For plotting the Bargraph
+        # For plotting the second row
         html.Div(
             [
+                # Plotting the pieplot
+                html.Div(
+                    [
+                        html.Label("Year"),
+                        dcc.Dropdown(
+                            id="select_year_dropdown",
+                            options= [{"labels": int(i), "value": int(i) } for i in 
+                                      sorted([feature for feature in data_["year"].unique()], reverse=False)],
+                            value= 2020
+                            ),
+                        dcc.Graph(id="pieplot_graph")
+                    ],
+                    className="container first col"
+                ),
+                
+                # Plotting the bar graph
                 html.Div(
                     [
                         dcc.Graph(id="lineplot_graph")
                     ],
-                    className="container first col"
+                    className="container second col"
                 )
             ],
             className="row"
@@ -241,7 +257,7 @@ def update_price_text(value):
         elif len(val) == 6:
             return val[0:3]+","+val[3:]
         elif len(val) == 7:
-            return val[0]+","+val[1:4]+","+val[4:]
+            return val[0]+","+val[1:4]+","+val[4:]  
 # updating Barplot-----------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output("lineplot_graph","figure"),
               [Input("dropdown_make","value"),
@@ -258,6 +274,31 @@ def update_barplot(selected_make,selected_comp):
         fig =px.bar(
             x=data_filtered.groupby(selected_comp)["price"].mean().index, y=data_filtered.groupby(selected_comp)["price"].mean().values)
         return fig
+
+
+
+# Making pie plot for displaying the features and the mean price
+@app.callback(Output(component_id="pieplot_graph", component_property="figure"),
+              [Input(component_id="dropdown_make", component_property="value"),
+               Input(component_id="dropdown_comp", component_property="value"),
+               Input(component_id="pieplot_graph", component_property="value")]
+)
+def make_pie(selected_make,selected_comp, selected_year):
+    
+    # Making a filtered dataset
+    data_filtered = data_[data_["Vehicle Make"] == selected_make & data_["year"] == selected_year]
+    selected = []   # This would be our name for the pieplot
+    price = []  # This would be the value for the pieplot
+    
+    data_n = data_filtered.groupby(selected_comp)["price"].mean()
+    data_val = data_n.to_dict()
+    for fea,price in zip(data_val.keys(),data_val.values()):
+        selected.append(fea)
+        selected.append(price)
+        
+    fig = px.pie(names=selected, values=price)
+    
+    return fig
 
 
 @app.callback(Output(component_id="barplot_graph",component_property="figure"),
@@ -303,28 +344,26 @@ def update_model(selected_co):
     return fig
 
 
-# Making the plot showing all makes and preferred feature
-@app.callback(Output(component_id="make_price",component_property="figure"),
-              Input(component_id="dropdown_comp",component_property="value")) 
-def update_pie_plot(selected_make):
-    # Making the filtered data
-    data_filtered = data_.groupby("Vehicle Make",selected_make)["price"].mean()
-    selected = []   # Collects the selected feature for each price and make
-    make = []      # Collects the make for each selected feature and price
-    price = []    # Collects the mean price for each make and selected features
-    data_dict = data_filtered.to_dict()
-    for keys,values in zip(data_dict.keys(),data_dict.values()):
-        make.append(keys[0])
-        selected.append(keys[1])
-        price.append(values)
 
-    
-    fig = px.bar(x=make, y=price, color=selected)
-    return fig
+
+
+# Making the plot showing all makes and preferred feature
+# @app.callback(Output(component_id="make_price",component_property="figure"),
+#               Input(component_id="dropdown_comp",component_property="value")) 
+# def update_pie_plot(selected_make):
+#     # Making the filtered data
+#     data_filtered = data_.groupby("Vehicle Make",selected_make)["price"].mean()
+#     selected = []   # Collects the selected feature for each price and make
+#     make = []      # Collects the make for each selected feature and price
+#     price = []    # Collects the mean price for each make and selected features
+#     data_dict = data_filtered.to_dict()
+#     for keys,values in zip(data_dict.keys(),data_dict.values()):
+#         make.append(keys[0])
+#         selected.append(keys[1])
+#         price.append(values)
+#     fig = px.bar(x=make, y=price, color=selected)
+#     return fig
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-
