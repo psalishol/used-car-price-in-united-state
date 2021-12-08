@@ -238,7 +238,8 @@ def update_avg_price(value):
     else:
         return value
 
-# UPDATING AVERAGE PRICE TEXT----->
+#----> Updating the Card
+
 @app.callback(Output("avg_price_text","children"),
               [Input("dropdown_make","value")])
 def update_price_text(value):
@@ -254,8 +255,10 @@ def update_price_text(value):
             return val[0:3]+","+val[3:]
         elif len(val) == 7:
             return val[0]+","+val[1:4]+","+val[4:]  
+ 
         
-# updating Barplot-----------------------------------------------------------------------------------------------------------------------------
+#----> Callback for Barplot for features
+
 @app.callback(Output("lineplot_graph","figure"),
               [Input("dropdown_make","value"),
                Input("dropdown_comp","value")]
@@ -273,7 +276,7 @@ def update_barplot(selected_make,selected_comp):
         return fig
 
 
-#----> Pie plot for displaying the feature with year
+#----> Callback for Pie plot 
 
 # Making pie plot for displaying the features and the mean price
 @app.callback(Output(component_id="pieplot_graph", component_property="figure"),
@@ -305,11 +308,13 @@ def make_pie(selected_make,selected_comp, selected_year):
     return fig
 
 
+#---> Callback for updating barplot with year and features
+
 @app.callback(Output(component_id="barplot_graph",component_property="figure"),
               [Input(component_id="dropdown_make",component_property="value"),
                Input(component_id="dropdown_comp",component_property="value")]
               )
-def update_lineplot(selected_make,selected_val):
+def update_barplot_model(selected_make,selected_val):
     selected = []
     year = []
     price = []
@@ -325,6 +330,10 @@ def update_lineplot(selected_make,selected_val):
     fig =px.bar(
             x=year,y=price, color=selected, title=f"{selected_make}")
     return fig
+
+
+
+#----> Callback for updating Barplot with Make as x
 
 @app.callback(Output(
     component_id="make_price",component_property="figure"),
@@ -346,28 +355,6 @@ def update_model(selected_co):
     #Plotting the bar plot for showing the make and price 
     fig = px.bar(x=v_make, y=V_price,color=color, title='Vehicle Make with the price')
     return fig
-
-
-
-
-
-# Making the plot showing all makes and preferred feature
-# @app.callback(Output(component_id="make_price",component_property="figure"),
-#               Input(component_id="dropdown_comp",component_property="value")) 
-# def update_pie_plot(selected_make):
-#     # Making the filtered data
-#     data_filtered = data_.groupby("Vehicle Make",selected_make)["price"].mean()
-#     selected = []   # Collects the selected feature for each price and make
-#     make = []      # Collects the make for each selected feature and price
-#     price = []    # Collects the mean price for each make and selected features
-#     data_dict = data_filtered.to_dict()
-#     for keys,values in zip(data_dict.keys(),data_dict.values()):
-#         make.append(keys[0])
-#         selected.append(keys[1])
-#         price.append(values)
-#     fig = px.bar(x=make, y=price, color=selected)
-#     return fig
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
