@@ -153,15 +153,31 @@ app.layout = html.Div(
                     className= "container_card"
                 )
         
-            ]
+            ],
+            className = "row"
         ),
     
         # For plotting the second row
         html.Div(
             [
-                # Plotting the pieplot
+                # Plotting the bar graph
                 html.Div(
                     [
+                        dcc.Graph(id="lineplot_graph")
+                    ],
+                    className="container second col"
+                )
+            ],
+            className="row"
+        ),
+    
+        # For ploting barplot and barplot
+        html.Div(
+            [
+                
+                # Plotting the pieplot
+                html.Div(
+                    [                        
                         html.Label("Year"),
                         dcc.Dropdown(
                             id="select_year_dropdown",
@@ -177,30 +193,10 @@ app.layout = html.Div(
                 # Plotting the bar graph
                 html.Div(
                     [
-                        dcc.Graph(id="lineplot_graph")
-                    ],
-                    className="container second col"
-                )
-            ],
-            className="row"
-        ),
-    
-        # For ploting barplot grapgh
-        html.Div(
-            [
-                html.Div(
-                    [
                         dcc.Graph(id="barplot_graph")
                     ],
-                    className="container first col"
-                ),
-                
-                html.Div(
-                    [
-                        dcc.Graph(id="pie-plot-graph")
-                    ],
                     className="container second col"
-                )
+                ),
             ],
             className="row"
         ),
@@ -258,6 +254,7 @@ def update_price_text(value):
             return val[0:3]+","+val[3:]
         elif len(val) == 7:
             return val[0]+","+val[1:4]+","+val[4:]  
+        
 # updating Barplot-----------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output("lineplot_graph","figure"),
               [Input("dropdown_make","value"),
@@ -276,6 +273,7 @@ def update_barplot(selected_make,selected_comp):
         return fig
 
 
+#----> Pie plot for displaying the feature with year
 
 # Making pie plot for displaying the features and the mean price
 @app.callback(Output(component_id="pieplot_graph", component_property="figure"),
@@ -286,18 +284,24 @@ def update_barplot(selected_make,selected_comp):
 def make_pie(selected_make,selected_comp, selected_year):
     
     # Making a filtered dataset
-    data_filtered = data_[data_["Vehicle Make"] == selected_make & data_["year"] == selected_year]
+    data_filtered = data_[(data_["Vehicle Make"] == selected_make) & (data_["year"] == selected_year)]
     selected = []   # This would be our name for the pieplot
-    price = []  # This would be the value for the pieplot
+    price_val = []  # This would be the value for the pieplot
     
     data_n = data_filtered.groupby(selected_comp)["price"].mean()
     data_val = data_n.to_dict()
     for fea,price in zip(data_val.keys(),data_val.values()):
         selected.append(fea)
-        selected.append(price)
+        price_val.append(price)
         
-    fig = px.pie(names=selected, values=price)
-    
+    # Making new dataframe from the list
+    data_l = {
+        "make": selected,
+        "Price": price_val
+    }
+    df = pd.DataFrame(data_l)
+        
+    fig = px.pie(data_frame=df, names="make",values="Price")    
     return fig
 
 
@@ -333,7 +337,7 @@ def update_model(selected_co):
     color = []
     # Making a copy of the dataset
     new_d = data_.copy()
-    mk_grouped = new_d.groupby("Vehicle Make",selected_co)["price"].mean()
+    mk_grouped = new_d.groupby(["Vehicle Make",selected_co])["price"].mean()
     dict_val = mk_grouped.to_dict()
     for make,price in zip(dict_val.keys(),dict_val.values()):
         v_make.append(make[0])
