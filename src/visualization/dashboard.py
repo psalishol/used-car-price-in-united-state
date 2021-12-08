@@ -165,7 +165,7 @@ app.layout = html.Div(
                         html.Label("Year"),
                         dcc.Dropdown(
                             id="select_year_dropdown",
-                            options= [{"labels": int(i), "value": int(i) } for i in 
+                            options= [{"label": int(i), "value": int(i) } for i in 
                                       sorted([feature for feature in data_["year"].unique()], reverse=False)],
                             value= 2020
                             ),
@@ -281,7 +281,7 @@ def update_barplot(selected_make,selected_comp):
 @app.callback(Output(component_id="pieplot_graph", component_property="figure"),
               [Input(component_id="dropdown_make", component_property="value"),
                Input(component_id="dropdown_comp", component_property="value"),
-               Input(component_id="pieplot_graph", component_property="value")]
+               Input(component_id="select_year_dropdown", component_property="value")]
 )
 def make_pie(selected_make,selected_comp, selected_year):
     
