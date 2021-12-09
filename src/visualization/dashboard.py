@@ -310,50 +310,50 @@ def update_barplot_model(selected_make,selected_val):
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
 #               Input(component_id="dropdown_make",component_property="value"))
-def update_satelite(selected_make):
+# def update_satelite(selected_make):
     
-    data_filtered = data_[data_['Vehicle Make'] == selected_make]
-    traces = []
-    # Creating access token for mapbox
-    mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
-    # Layout for the Map
-    layout = dict(
-        autosize=True,
-        automargin=True,
-        margin=dict(
-            l=30,
-            r=30,
-            b=20,
-            t=40
-        ),
-        hovermode="closest",
-        plot_bgcolor="#F9F9F9",
-        paper_bgcolor="#F9F9F9",
-        legend=dict(font=dict(size=10), orientation='h'),
-        title='Satellite Overview',
-        mapbox=dict(
-            accesstoken=mapbox_access_token,
-            style="dark",
-            center=dict(
-                lon=-78.05,
-                lat=42.54
-            ),
-            zoom=7,
-        )
-    )
-    trace = dict(
-            type='scattermapbox',
-            lon=data_filtered['Longitude'],
-            lat=data_filtered['Latitude'],
-            marker=dict(
-                size=4,
-                opacity=0.6,
-            )
-        )
+#     data_filtered = data_[data_['Vehicle Make'] == selected_make]
+#     traces = []
+#     # Creating access token for mapbox
+#     mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
+#     # Layout for the Map
+#     layout = dict(
+#         autosize=True,
+#         automargin=True,
+#         margin=dict(
+#             l=30,
+#             r=30,
+#             b=20,
+#             t=40
+#         ),
+#         hovermode="closest",
+#         plot_bgcolor="#F9F9F9",
+#         paper_bgcolor="#F9F9F9",
+#         legend=dict(font=dict(size=10), orientation='h'),
+#         title='Satellite Overview',
+#         mapbox=dict(
+#             accesstoken=mapbox_access_token,
+#             style="dark",
+#             center=dict(
+#                 lon=-78.05,
+#                 lat=42.54
+#             ),
+#             zoom=7,
+#         )
+#     )
+#     trace = dict(
+#             type='scattermapbox',
+#             lon=data_filtered['Longitude'],
+#             lat=data_filtered['Latitude'],
+#             marker=dict(
+#                 size=4,
+#                 opacity=0.6,
+#             )
+#         )
     
-    figure = dict(data=trace, layout=layout)
+#     figure = dict(data=trace, layout=layout)
     
-    return figure
+#     return figure
         
     
 
@@ -379,6 +379,7 @@ def update_model(selected_co):
         V_price.append(price)
     #Plotting the bar plot for showing the make and price 
     fig = px.bar(x=v_make, y=V_price,color=color, title='Vehicle Make with the price')
+    
     return fig
 
 if __name__ == '__main__':
