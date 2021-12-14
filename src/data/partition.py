@@ -58,6 +58,8 @@ def create_blank_partition():
         print(dir)
         return dir
 
+
+
 # Partitioing and hashing the dataset
 def partition_by_hashing(df, name , progress= None):
     # hashing the listing_id column into the number of partitions
