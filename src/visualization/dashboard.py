@@ -23,7 +23,7 @@ cols = ["year", "mileage", "price", "fueltype", "Drivetrain", "Transmission",
 
 # Reading the file
 def make_df(data_name, colmn):
-    filedir = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\data\interim"
+    filedir = r"..\data\interim"
     filepath = os.path.join(filedir, data_name+".csv")
 
     # Reading the file
@@ -114,6 +114,7 @@ app.layout = html.Div(
                     id="model",
                     className="container_card"
                 ),
+        
         
                 # For displaying the Avg price
                 html.Div(
