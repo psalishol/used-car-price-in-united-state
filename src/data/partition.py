@@ -23,9 +23,7 @@ def col_list(data_path, chunksize):
     for df_iter, chunk in enumerate(pd.read_csv(data_path, chunksize=chunksize, iterator=False)):
         pass
     col_list = list(chunk.columns)
-    return col_list    
-
-columns_list = col_list(df_dir, chunksize)
+    return col_list
 
 # hashing the listing id to allow even partitioning across the dataset
 def hash_(listing_id):
@@ -76,26 +74,25 @@ def create_partition():
 # Making a blank partition
 def create_blank_partition():
     """Creating a blank partition with the number of bucket"""
+    start = time.time()
+    data_list = col_list(df_dir, chunksize)
     for i in range(N_PARTITION):
-        
-        dir_base = os.path.join(base_partitions_dir,"Vehicle_used_data_{}.csv".format(str(i)))
-        # Making directory for the file location
-        file_path = r"..\data\external\used_cars_data.csv"  
-        
+        file_base_dir = os.path.join(base_partitions_dir,"p{}".format(str(i)),"").replace("\\","/")
+        print(file_base_dir)
         # Opening the file and writing it to the partition created
-        with open(file_path, "r") as data, open(dir_base, "w") as f:
-            f.write(",".join(list(data.columns)))
-        print(dir)
-        return dir
-
-
+        with open(file_base_dir+"vehicle_used_data.csv", "w") as f:
+            f.write(",".join(data_list))
+    end = time.time()
+    print("Time taken ------------------- | {}sec".format(str(end-start)))
+    return file_base_dir
 
 # Partitioing and hashing the 
 def partition_by_hashing(df, name , progress= None):
     # hashing the listing_id column into the number of partitions
     df["hashed"] = df["listing_id"].apply(hash_) % N_PARTITION
     for partitions, data in df.groupby("hashed"):
-        # Wrting the data to the partition
+        # dropping the hashed column
+        data = data.drop("hashed", axis=1)
         path_dir = os.path.join(base_partitions_dir,"Vehicle_used_data_{}.csv".format(str(partitions)))
         # Writing the data to the path
         with open(path_dir, "a") as f:
@@ -107,9 +104,10 @@ os.listdir(dir)
 
 if __name__ == 'main':
     # Making the directory for partitions
-    dir = create_partition()
-    # # Reading the data in chunk
-    # chunksize = 1e6
-    # df = pd.read_csv("C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\Data\used_vehicle_data.csv", chunksize=chunksize)
-    # partition = partition_by_hashing(df, name="read", progress=10)
-    # print(partition)
+    chunksize = 1e5
+    df_dir = r"\Data\external\used_cars_data.csv"
+    for df_iter, data in enumerate(pd.read_csv(r"..\Data\external\used_cars_data.csv", iterator=True, chunksize=chunksize, encoding="latin1"),1):
+        print(df_iter)
+        partition = partition_by_hashing(df=data)
+        # data = partition_by_hashing(df, name="listing_id", progress=None)
+        
