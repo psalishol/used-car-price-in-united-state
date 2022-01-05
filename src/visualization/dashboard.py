@@ -16,10 +16,15 @@ nomi = pgeocode.Nominatim('us')
 app = dash.Dash(__name__)
 server = app.server
 
-# Making a list of columns to import
-cols = ["year", "mileage", "price", "fueltype", "Drivetrain", "Transmission",
-        "State", "City", "Engine size", "Avg mpg", "Vehicle Make", "Zip","Type"]
+# Loading the data
+DATAPATH =  r"..\Data\external\used_cars_data.csv"
+data_ = pd.read_csv(DATAPATH, delimiter=",")
 
+def load_data(FILEPATH):
+    chunksize = 1e7
+    chunk = pd.read_csv(FILEPATH, chunksize=chunksize)
+    for chunk in enumerate(pd.read_csv(FILEPATH, chunksize=chunksize, delimiter=",")):
+        print(chunk)
 
 # Reading the file
 def make_df(data_name, colmn):
@@ -44,18 +49,23 @@ def concat_data(dataname, col_s, base_data):
     new_df = make_df(dataname, col_s)
     concat_df = pd.concat([base_data, new_df], axis=0)
 
-    return concat_df
+    return concat_d
 
 
-# Making list of dataname to be concatinated
-data_list = ["BMW_cl", "Buick_cl", "cardillac_cl", "Chevrolet_cl", "Chrysler_cl",
-             "Dodge_cl", "Ford_cl", "GMC_cl", "hyundai_cl","honda_cl", "jaguar_cl", "toyota_cl","volvo_cl"]
+#----------------Import the data here------------------#
 
-# Concatinating the datas.
-for data in data_list:
-    data_ = concat_data(data, cols, data_)
-
-
+def import_data(partition_number):
+    
+    Chunksize = 1e5
+    FILEPATH = r"/Data/interim/.csv"
+    for i in range(partition_number):
+        new_imp = pd.read_csv(FILEPATH,delimiter=",")
+        data = pd.concat([data,new_imp], axis=0)
+        
+    return data
+    
+# Importing the data
+data_ = import_data(3)
 
 #----> App layout
 
