@@ -16,41 +16,16 @@ nomi = pgeocode.Nominatim('us')
 app = dash.Dash(__name__)
 server = app.server
 
-# Loading the data
-DATAPATH =  r"..\Data\external\used_cars_data.csv"
-data_ = pd.read_csv(DATAPATH, delimiter=",")
 
-def load_data(FILEPATH):
-    chunksize = 1e7
-    chunk = pd.read_csv(FILEPATH, chunksize=chunksize)
-    for chunk in enumerate(pd.read_csv(FILEPATH, chunksize=chunksize, delimiter=",")):
-        print(chunk)
-
-# Reading the file
-def make_df(data_name, colmn):
-    filedir = r"..\data\interim"
-    filepath = os.path.join(filedir, data_name+".csv")
-
-    # Reading the file
-    data = pd.read_csv(filepath, usecols=colmn)
-    # Making new col ---> Longitude and Latitude
-    data['Latitude'] = (nomi.query_postal_code(data['Zip'].tolist()).latitude)
-    data['Longitude'] = (nomi.query_postal_code(
-        data['Zip'].tolist()).longitude)
-
+# Loading the dataset 
+def concat_data(FILE_DIR):
+    N_SAMPLE = len(os.listdir(FILE_DIR))
+    data = pd.read_csv(os.path.join(FILE_DIR,"used_data_0.csv"), delimiter=",")
+    for i in range(1, N_SAMPLE):
+        new_data = pd.read_csv(os.path.join(FILE_DIR,"used_data_{}.csv".format(i)), delimiter=",")
+        data = pd.concat([data,new_data],axis=0)
+        
     return data
-
-# Making base data
-data_ = make_df("Audi_cl", cols)
-
-
-# For concatenating the data
-def concat_data(dataname, col_s, base_data):
-    new_df = make_df(dataname, col_s)
-    concat_df = pd.concat([base_data, new_df], axis=0)
-
-    return concat_d
-
 
 #----------------Import the data here------------------#
 
@@ -394,4 +369,8 @@ def update_model(selected_co):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    
+    datapath = r"..\Data\interim\used_data_interim.csv"
+    data = pd.read_csv(datapath, delimiter=",")
+    data.head()
+    # app.run_server(debug=True)
