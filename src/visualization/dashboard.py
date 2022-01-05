@@ -17,7 +17,7 @@ app = dash.Dash(__name__)
 server = app.server
 
 
-# Loading the dataset 
+#--------- Loading the dataset ---------------#
 def concat_data(FILE_DIR):
     N_SAMPLE = len(os.listdir(FILE_DIR))
     data = pd.read_csv(os.path.join(FILE_DIR,"used_data_0.csv"), delimiter=",")
@@ -26,6 +26,9 @@ def concat_data(FILE_DIR):
         data = pd.concat([data,new_data],axis=0)
         
     return data
+
+FILEPATH = r"..\Data\Dashboard data"
+data_ = concat_data(FILEPATH)
 
 #----------------Import the data here------------------#
 
