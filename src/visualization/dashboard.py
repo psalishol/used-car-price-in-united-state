@@ -27,23 +27,9 @@ def concat_data(FILE_DIR):
         
     return data
 
+
 FILEPATH = r"..\Data\Dashboard data"
 data_ = concat_data(FILEPATH)
-
-#----------------Import the data here------------------#
-
-def import_data(partition_number):
-    
-    Chunksize = 1e5
-    FILEPATH = r"/Data/interim/.csv"
-    for i in range(partition_number):
-        new_imp = pd.read_csv(FILEPATH,delimiter=",")
-        data = pd.concat([data,new_imp], axis=0)
-        
-    return data
-    
-# Importing the data
-data_ = import_data(3)
 
 #----> App layout
 
@@ -70,7 +56,7 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="dropdown_make",
                             options = [{"label":i,"value":i} for i in 
-                                            sorted([feature for feature in list(data_["Vehicle Make"].unique()) if len(data_[data_["Vehicle Make"] == feature]) > 300],reverse=False)],
+                                            sorted([feature for feature in list(data_["make_name"].unique()) if len(data_[data_["make_name"] == feature]) > 300],reverse=False)],
                             value= "Audi",
                             className="dcc_control"
                         ),
@@ -373,7 +359,6 @@ def update_model(selected_co):
 
 if __name__ == '__main__':
     
-    datapath = r"..\Data\interim\used_data_interim.csv"
-    data = pd.read_csv(datapath, delimiter=",")
-    data.head()
+    FILEPATH = r"..\Data\Dashboard data"
+    data_ = concat_data(FILEPATH)
     # app.run_server(debug=True)
