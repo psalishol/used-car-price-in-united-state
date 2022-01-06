@@ -31,6 +31,10 @@ def concat_data(FILE_DIR):
 FILEPATH = r"..\Data\Dashboard data"
 data_ = concat_data(FILEPATH)
 
+
+# Model list for the vehicle
+make_list = [feature for feature in sorted(list(data_["make_name"].unique()),reverse=False) 
+                    if len(data_[data_["make_name"] == feature]) > 1000]
 #----> App layout
 
 app.layout = html.Div(
@@ -55,9 +59,7 @@ app.layout = html.Div(
                         html.Label("Vehicle Make",id="make_label"),
                         dcc.Dropdown(
                             id="dropdown_make",
-                            options = [{"label":i,"value":i} for i in 
-                                            sorted([feature for feature in list(data_["make_name"].unique()) if len(data_[data_["make_name"] == feature]) > 300],reverse=False)],
-                            value= "Audi",
+                            options = [{"label":i,"value":i} for i in make_list],
                             className="dcc_control"
                         ),
                         
@@ -127,19 +129,19 @@ app.layout = html.Div(
                 
                 # Plotting the pieplot
                 html.Div(
-                    [                        
+                    [
                         html.Label("Year", id="year_label"),
                         dcc.Dropdown(
                             id="select_year_dropdown",
                             options= [{"label": int(i), "value": int(i) } for i in 
-                                      sorted([feature for feature in data_["year"].unique()], reverse=False)],
+                                      sorted([feature for feature in data_["listed_year"].unique()], reverse=False)],
                             value= 2020
                             ),
                         dcc.Graph(id="pieplot_graph")
                     ],
                     className="container first col"
                 ),
-                
+
                 # Plotting the bar graph
                 html.Div(
                     [
