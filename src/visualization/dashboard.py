@@ -68,7 +68,7 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="dropdown_comp",
                             options=[{"label": i,"value": i} for i in data_.columns 
-                                            if data_[i].dtype == object and i not in ["State","City","Model","Vehicle Make","Zip"]],
+                                            if data_[i].dtype == object],
                             value="Transmission",
                             className="dcc_control"
                         ),
@@ -198,8 +198,8 @@ def update_price_text(value):
     if value is None:
         return "0"
     else:
-        name = data_.groupby("Vehicle Make")["price"].mean().to_frame()
-        val = str(int(name[data_.groupby("Vehicle Make")["price"].mean().index == value].values))
+        name = data_.groupby("make_name")["price"].mean().to_frame()
+        val = str(int(name[data_.groupby("make_name")["price"].mean().index == value].values))
         # formating the Price
         if len(val) == 5:
             return val[0:2]+","+val[2:]
@@ -216,11 +216,11 @@ def update_price_text(value):
                Input("dropdown_comp","value")]
               )
 def update_barplot(selected_make,selected_comp):
-    data_filtered = data_[data_["Vehicle Make"] == selected_make]
+    data_filtered = data_[data_["make_name"] == selected_make]
     # If nothing is selected
     if selected_comp == None:
         fig =px.bar(
-        x=data_.groupby("Transmission")["price"].mean().index, y=data_.groupby("Transmission")["price"].mean().values)
+        x=data_.groupby("transmission")["price"].mean().index, y=data_.groupby("transmission")["price"].mean().values)
         return fig
     else:
         fig =px.bar(
@@ -239,7 +239,7 @@ def update_barplot(selected_make,selected_comp):
 def make_pie(selected_make,selected_comp, selected_year):
     
     # Making a filtered dataset
-    data_filtered = data_[(data_["Vehicle Make"] == selected_make) & (data_["year"] == selected_year)]
+    data_filtered = data_[(data_["make_name"] == selected_make) & (data_["year"] == selected_year)]
     selected = []   # This would be our name for the pieplot
     price_val = []  # This would be the value for the pieplot
     
@@ -271,7 +271,7 @@ def update_barplot_model(selected_make,selected_val):
     year = []
     price = []
     # Making a filtered dataframe
-    data_filtered = data_[data_["Vehicle Make"] == selected_make]    
+    data_filtered = data_[data_["make_name"] == selected_make]    
     grouped_d = data_filtered.groupby(["year",selected_val])["price"].mean().to_dict()
     for key_p,val_p in zip(grouped_d.keys(),grouped_d.values()):
         year.append(key_p[0])
@@ -348,7 +348,7 @@ def update_model(selected_co):
     color = []
     # Making a copy of the dataset
     new_d = data_.copy()
-    mk_grouped = new_d.groupby(["Vehicle Make",selected_co])["price"].mean()
+    mk_grouped = new_d.groupby(["make_name",selected_co])["price"].mean()
     dict_val = mk_grouped.to_dict()
     for make,price in zip(dict_val.keys(),dict_val.values()):
         v_make.append(make[0])
@@ -361,6 +361,7 @@ def update_model(selected_co):
 
 if __name__ == '__main__':
     
-    FILEPATH = r"..\Data\Dashboard data"
-    data_ = concat_data(FILEPATH)
+    FILEPATH = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\Data\Dashboard data"
+    # data_ = concat_data(FILEPATH)
     # app.run_server(debug=True)
+    os.listdir(FILEPATH)
