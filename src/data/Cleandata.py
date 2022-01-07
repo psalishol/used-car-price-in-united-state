@@ -401,7 +401,7 @@ def clean_data(Transformer, to_csv=False, filename=None, verbose=False):
         data = transformer._clean_mpg(drop=True, verbose=True)
         data = transformer.extract_model(drop=True, verbose=True)
         data = transformer.extract_vinfo(drop=True, verbose=True)
-        data = transformer.mk_pd_type(drop=True, verbose=True)
+        data = transformer.mk_pd_type(drop=True,    verbose=True)
         end = time.time()
         print(
             "[CL]---> Successfully Cleaned {}.      || Total Time Taken {}min".format(" ".join(filename.title().split("_"))), str(np.round((end-start)/60,2)))
