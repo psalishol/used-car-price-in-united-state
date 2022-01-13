@@ -13,6 +13,7 @@ import time
 chunksize= 1e5
 df_dir = r"\Data\external\used_cars_data.csv"
 
+
 # PARTITIONING PARAMETER
 N_PARTITION = 50    # Number of buckets
 base_partitions_dir = r"..\data\external\Partition"
@@ -87,7 +88,7 @@ def create_blank_partition():
     return file_base_dir
 
 # Partitioing and hashing the 
-def partition_by_hashing(df, name , progress= None):
+def partition_by_hashing(df):
     # hashing the listing_id column into the number of partitions
     df["hashed"] = df["listing_id"].apply(hash_) % N_PARTITION
     for partitions, data in df.groupby("hashed"):
@@ -96,7 +97,6 @@ def partition_by_hashing(df, name , progress= None):
         path_dir = os.path.join(base_partitions_dir,"Vehicle_used_data_{}.csv".format(str(partitions)))
         # Writing the data to the path
         with open(path_dir, "a") as f:
-            f.write("\n")
             data.to_csv(f, header=False, index=False)
         
 dir = create_blank_partition()
@@ -105,9 +105,8 @@ os.listdir(dir)
 if __name__ == 'main':
     # Making the directory for partitions
     chunksize = 1e5
-    df_dir = r"\Data\external\used_cars_data.csv"
+    df_dir = r"..\Data\external\used_cars_data.csv"
     for df_iter, data in enumerate(pd.read_csv(r"..\Data\external\used_cars_data.csv", iterator=True, chunksize=chunksize, encoding="latin1"),1):
         print(df_iter)
         partition = partition_by_hashing(df=data)
         # data = partition_by_hashing(df, name="listing_id", progress=None)
-        
