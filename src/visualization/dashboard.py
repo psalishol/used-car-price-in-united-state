@@ -11,32 +11,46 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 
 # For making longitude and Latitude from zip code
-nomi = pgeocode.Nominatim('us')
+# nomi = pgeocode.Nominatim('us')
 
 app = dash.Dash(__name__)
 server = app.server
 
-
 #--------- Loading the dataset ---------------#
 def concat_data(FILE_DIR):
-    N_SAMPLE = len(os.listdir(FILE_DIR))
-    data = pd.read_csv(os.path.join(FILE_DIR,"used_data_0.csv"), delimiter=",")
-    for i in range(1, N_SAMPLE):
-        new_data = pd.read_csv(os.path.join(FILE_DIR,"used_data_{}.csv".format(i)), delimiter=",")
-        data = pd.concat([data,new_data],axis=0)
+    """Joins data in different dataset to form a single dataframe
+    
+    Parameters
+    ----------
+        FILE_DIR (path): Path leading to where the folders are kept
         
+    Returns
+    ---------
+        [Dataframe]: Dataframe containing all the files
+    """
+    N_SAMPLE = len(os.listdir(FILE_DIR))
+    F_FILEPATH = os.path.join(FILE_DIR,"used_data_0.csv")
+    data = pd.read_csv(F_FILEPATH, delimiter=",")
+    for i in range(1, N_SAMPLE):
+        NEW_PATH = os.path.join(FILE_DIR,"used_data_{}.csv".format(i))
+        new_data = pd.read_csv(NEW_PATH, delimiter=",")
+        data = pd.concat([data,new_data],axis=0)
+           
     return data
 
 
-FILEPATH = r"..\Data\Dashboard data"
-data_ = concat_data(FILEPATH)
 
+# using this as re
+
+##------- Creating data for the dashboard ----------##
+DATA_DIRCTION = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\data\Dashboard_data"
+data_ = concat_data(DATA_DIRCTION)
 
 # Model list for the vehicle
 make_list = [feature for feature in sorted(list(data_["make_name"].unique()),reverse=False) 
                     if len(data_[data_["make_name"] == feature]) > 1000]
-#----> App layout
 
+#----> App layout
 app.layout = html.Div(
     [
         dcc.Store(id='aggregate_data'),
@@ -46,11 +60,13 @@ app.layout = html.Div(
                     [
                         html.H2("Value Insight", id="header-text"),
         
+        
                     ],
                 )
             ],
             className= "header"
         ),
+        
         html.Div(
             [
                 html.Div(
@@ -76,6 +92,7 @@ app.layout = html.Div(
                 )
             ]
         ),
+        
         html.Div(
             [
                 # For Model slot
@@ -134,7 +151,7 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="select_year_dropdown",
                             options= [{"label": int(i), "value": int(i) } for i in 
-                                      sorted([feature for feature in data_["listed_year"].unique()], reverse=False)],
+                                      sorted([feature for feature in data_["year"].unique()], reverse=False)],
                             value= 2020
                             ),
                         dcc.Graph(id="pieplot_graph")
@@ -163,8 +180,8 @@ app.layout = html.Div(
                 )
             ]
         ),
-    
-    
+
+
         # For Plotting all make with price
         html.Div(
             [
@@ -181,6 +198,10 @@ app.layout = html.Div(
 )
 
 
+# For the helper function in the accordance of that and that not in main branch of t
+# of the project
+
+
 #----> Helper functions
 @app.callback(Output("model_text","children"),
               [Input("dropdown_make","value")])
@@ -188,7 +209,7 @@ def update_avg_price(value):
     if value is None:
         return "None"
     else:
-        return value
+        return value.title()
 
 #----> Updating the Card
 
@@ -237,7 +258,6 @@ def update_barplot(selected_make,selected_comp):
                Input(component_id="select_year_dropdown", component_property="value")]
 )
 def make_pie(selected_make,selected_comp, selected_year):
-    
     # Making a filtered dataset
     data_filtered = data_[(data_["make_name"] == selected_make) & (data_["year"] == selected_year)]
     selected = []   # This would be our name for the pieplot
@@ -255,7 +275,6 @@ def make_pie(selected_make,selected_comp, selected_year):
         "Price": price_val
     }
     df = pd.DataFrame(data_l)
-        
     fig = px.pie(data_frame=df, names="make",values="Price")    
     return fig
 
@@ -284,9 +303,10 @@ def update_barplot_model(selected_make,selected_val):
     return fig
 
 
+
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
-#               Input(component_id="dropdown_make",component_property="value"))
+            #   Input(component_id="dropdown_make",component_property="value"))
 # def update_satelite(selected_make):
     
 #     data_filtered = data_[data_['Vehicle Make'] == selected_make]
@@ -337,6 +357,7 @@ def update_barplot_model(selected_make,selected_val):
     
 #----> Callback for updating Barplot with Make as x
 
+
 @app.callback(Output(
     component_id="make_price",component_property="figure"),
               Input(
@@ -360,8 +381,5 @@ def update_model(selected_co):
     return fig
 
 if __name__ == '__main__':
-    
-    FILEPATH = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\Data\Dashboard data"
-    # data_ = concat_data(FILEPATH)
-    # app.run_server(debug=True)
-    os.listdir(FILEPATH)
+    app.run_server(debug=True)
+    # print(data_.head())
