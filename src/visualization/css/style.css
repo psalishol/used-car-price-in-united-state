@@ -8,19 +8,9 @@ body {
     text-align: center;
     
 }
-
-
-.container_card {
-    background-color:#2D3038;
-    border-radius: 5px;
-    padding: 20px;
-    position: relative;
-    box-shadow: 2px 2px 2px #202229;
-    margin: 20px
+#feature_label{
+    margin: 20px;
 }
 
-#make_text{
-    font-size: 20px;
-    font-family: 'Courier New', Courier, monospace;
-    color: aliceblue;
-}
+
+
