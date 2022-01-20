@@ -39,17 +39,25 @@ def concat_data(FILE_DIR):
     return data
 
 
-
-# using this as re
-
 ##------- Creating data for the dashboard ----------##
 DATA_DIRCTION = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\data\Dashboard_data"
-data_ = concat_data(DATA_DIRCTION)
+df = concat_data(DATA_DIRCTION)
+
+
+# Cleaning the data
+def clean_data(data):
+    data["transmission"] = data["transmission"].replace({"A":"Automatic","M":"Manual","nan":np.nan})
+    
+    
+    return data
+
+data_ = clean_data(df)
 
 # Model list for the vehicle
 make_list = [feature for feature in sorted(list(data_["make_name"].unique()),reverse=False) 
                     if len(data_[data_["make_name"] == feature]) > 1000]
 
+model_list = [" ".join(feature.split("_")).title().replace("Is New","Vehicle Type") for feature in data_.columns if feature not in  ["listed_date","Unnamed: 0"]]
 #----> App layout
 app.layout = html.Div(
     [
@@ -83,9 +91,8 @@ app.layout = html.Div(
                         html.Label("Choose Feature to Compare",id="feature_label"),
                         dcc.Dropdown(
                             id="dropdown_comp",
-                            options=[{"label": i,"value": i} for i in data_.columns 
-                                            if data_[i].dtype == object],
-                            value="Transmission",
+                            options=[{"label": i,"value": i} for i in sorted(model_list, reverse=False)],
+                            value="transmission",
                             className="dcc_control"
                         ),
                     ]
@@ -241,11 +248,11 @@ def update_barplot(selected_make,selected_comp):
     # If nothing is selected
     if selected_comp == None:
         fig =px.bar(
-        x=data_.groupby("transmission")["price"].mean().index, y=data_.groupby("transmission")["price"].mean().values)
+        x=list(data_.groupby("transmission")["price"].mean().index), y=list(data_.groupby("transmission")["price"].mean().values))
         return fig
     else:
         fig =px.bar(
-            x=data_filtered.groupby(selected_comp)["price"].mean().index, y=data_filtered.groupby(selected_comp)["price"].mean().values)
+            x=list(data_filtered.groupby(selected_comp)["price"].mean().index), y=list(data_filtered.groupby(selected_comp)["price"].mean().values))
         return fig
 
 
@@ -305,52 +312,52 @@ def update_barplot_model(selected_make,selected_val):
 
 
 #----> Callaback for updating satelite
-# @app.callback(Output(component_id="satelite_view",component_property="figure"),
-            #   Input(component_id="dropdown_make",component_property="value"))
-# def update_satelite(selected_make):
+@app.callback(Output(component_id="satelite_view",component_property="figure"),
+              Input(component_id="dropdown_make",component_property="value"))
+def update_satelite(selected_make):
     
-#     data_filtered = data_[data_['Vehicle Make'] == selected_make]
-#     traces = []
-#     # Creating access token for mapbox
-#     mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
-#     # Layout for the Map
-#     layout = dict(
-#         autosize=True,
-#         automargin=True,
-#         margin=dict(
-#             l=30,
-#             r=30,
-#             b=20,
-#             t=40
-#         ),
-#         hovermode="closest",
-#         plot_bgcolor="#F9F9F9",
-#         paper_bgcolor="#F9F9F9",
-#         legend=dict(font=dict(size=10), orientation='h'),
-#         title='Satellite Overview',
-#         mapbox=dict(
-#             accesstoken=mapbox_access_token,
-#             style="dark",
-#             center=dict(
-#                 lon=-78.05,
-#                 lat=42.54
-#             ),
-#             zoom=7,
-#         )
-#     )
-#     trace = dict(
-#             type='scattermapbox',
-#             lon=data_filtered['Longitude'],
-#             lat=data_filtered['Latitude'],
-#             marker=dict(
-#                 size=4,
-#                 opacity=0.6,
-#             )
-#         )
+    data_filtered = data_[data_['Vehicle Make'] == selected_make]
+    traces = []
+    # Creating access token for mapbox
+    mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
+    # Layout for the Map
+    layout = dict(
+        autosize=True,
+        automargin=True,
+        margin=dict(
+            l=30,
+            r=30,
+            b=20,
+            t=40
+        ),
+        hovermode="closest",
+        plot_bgcolor="#F9F9F9",
+        paper_bgcolor="#F9F9F9",
+        legend=dict(font=dict(size=10), orientation='h'),
+        title='Satellite Overview',
+        mapbox=dict(
+            accesstoken=mapbox_access_token,
+            style="dark",
+            center=dict(
+                lon=-78.05,
+                lat=42.54
+            ),
+            zoom=7,
+        )
+    )
+    trace = dict(
+            type='scattermapbox',
+            lon=data_filtered['Longitude'],
+            lat=data_filtered['Latitude'],
+            marker=dict(
+                size=4,
+                opacity=0.6,
+            )
+        )
     
-#     figure = dict(data=trace, layout=layout)
+    figure = dict(data=trace, layout=layout)
     
-#     return figure
+    return figure
         
     
 
@@ -379,6 +386,7 @@ def update_model(selected_co):
     fig = px.bar(x=v_make, y=V_price,color=color, title='Vehicle Make with the price')
     
     return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
