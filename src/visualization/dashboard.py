@@ -311,8 +311,20 @@ def update_barplot_model(selected_make,selected_val):
 
 
 
-#using the same in the sequence
 
+
+# plotting the map chart for the dashboard 
+@app.callback(Output(component_id="",component_property=""),
+              [Input(component_id="",component_property=""),
+               Input(component_id="",component_property=""),
+               Input(component_id="", component_property="")])
+def map_chart(selected_make,fir_selected,selected_sec):
+    
+    # Filtering the data by the selected make name
+    filtered_data = data_[data_["make_name"] == selected_make]
+    if data_[fir_selected].dtype == object or data_[selected_sec].dtype == object:
+        # input some more stuff here    
+            pass
 
 
 #----> Callaback for updating satelite
