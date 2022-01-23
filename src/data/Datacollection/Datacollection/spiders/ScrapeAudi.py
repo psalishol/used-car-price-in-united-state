@@ -54,3 +54,4 @@ class CrawlAudi(scrapy.Spider):
                            "div.dealer-address::text").get().strip(),
                        vehicle_features=product_link.css("ul.vehicle-features-list li::text").getall())
 
+
