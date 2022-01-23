@@ -40,8 +40,8 @@ def concat_data(FILE_DIR):
 
 
 ##------- Creating data for the dashboard ----------##
-DATA_DIRCTION = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\data\Dashboard_data"
-df = concat_data(DATA_DIRCTION)
+DATA_PATH = r"C:\Users\PSALISHOL\Documents\My Projects\Car Prediction\data\Dashboard_data"
+df = concat_data(DATA_PATH)
 
 
 # Cleaning the data
@@ -84,6 +84,7 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="dropdown_make",
                             options = [{"label":i,"value":i} for i in make_list],
+                            value = "Acura",
                             className="dcc_control"
                         ),
                         
@@ -254,8 +255,7 @@ def update_barplot(selected_make,selected_comp):
         fig =px.bar(
             x=list(data_filtered.groupby(selected_comp)["price"].mean().index), y=list(data_filtered.groupby(selected_comp)["price"].mean().values))
         return fig
-
-
+    
 #----> Callback for Pie plot 
 
 # Making pie plot for displaying the features and the mean price
@@ -267,8 +267,8 @@ def update_barplot(selected_make,selected_comp):
 def make_pie(selected_make,selected_comp, selected_year):
     # Making a filtered dataset
     data_filtered = data_[(data_["make_name"] == selected_make) & (data_["year"] == selected_year)]
-    selected = []   # This would be our name for the pieplot
-    price_val = []  # This would be the value for the pieplot
+    selected = []   # This would be name for the pieplot
+    price_val = []  # This would be value for the pieplot
     
     data_n = data_filtered.groupby(selected_comp)["price"].mean()
     data_val = data_n.to_dict()
@@ -311,58 +311,62 @@ def update_barplot_model(selected_make,selected_val):
 
 
 
+#using the same in the sequence
+
+
+
 #----> Callaback for updating satelite
-@app.callback(Output(component_id="satelite_view",component_property="figure"),
-              Input(component_id="dropdown_make",component_property="value"))
-def update_satelite(selected_make):
+# @app.callback(Output(component_id="satelite_view",component_property="figure"),
+#               Input(component_id="dropdown_make",component_property="value"))
+# def update_satelite(selected_make):
     
-    data_filtered = data_[data_['Vehicle Make'] == selected_make]
-    traces = []
-    # Creating access token for mapbox
-    mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
-    # Layout for the Map
-    layout = dict(
-        autosize=True,
-        automargin=True,
-        margin=dict(
-            l=30,
-            r=30,
-            b=20,
-            t=40
-        ),
-        hovermode="closest",
-        plot_bgcolor="#F9F9F9",
-        paper_bgcolor="#F9F9F9",
-        legend=dict(font=dict(size=10), orientation='h'),
-        title='Satellite Overview',
-        mapbox=dict(
-            accesstoken=mapbox_access_token,
-            style="dark",
-            center=dict(
-                lon=-78.05,
-                lat=42.54
-            ),
-            zoom=7,
-        )
-    )
-    trace = dict(
-            type='scattermapbox',
-            lon=data_filtered['Longitude'],
-            lat=data_filtered['Latitude'],
-            marker=dict(
-                size=4,
-                opacity=0.6,
-            )
-        )
+#     data_filtered = data_[data_['Vehicle Make'] == selected_make]
+#     traces = []
+#     # Creating access token for mapbox
+#     mapbox_access_token = "sk.eyJ1IjoicHNhbGlzaG9sIiwiYSI6ImNrdTZydGhjMjFxbXEycXFrdmd0OWxnMmYifQ.KKXofcYq04f1MiPOIcitQQ"
+#     # Layout for the Map
+#     layout = dict(
+#         autosize=True,
+#         automargin=True,
+#         margin=dict(
+#             l=30,
+#             r=30,
+#             b=20,
+#             t=40
+#         ),
+#         hovermode="closest",
+#         plot_bgcolor="#F9F9F9",
+#         paper_bgcolor="#F9F9F9",
+#         legend=dict(font=dict(size=10), orientation='h'),
+#         title='Satellite Overview',
+#         mapbox=dict(
+#             accesstoken=mapbox_access_token,
+#             style="dark",
+#             center=dict(
+#                 lon=-78.05,
+#                 lat=42.54
+#             ),
+#             zoom=7,
+#         )
+#     )
+#     trace = dict(
+#             type='scattermapbox',
+#             lon=data_filtered['Longitude'],
+#             lat=data_filtered['Latitude'],
+#             marker=dict(
+#                 size=4,
+#                 opacity=0.6,
+#             )
+#         )
     
-    figure = dict(data=trace, layout=layout)
+#     figure = dict(data=trace, layout=layout)
     
-    return figure
+#     return figure
         
     
 
     
-#----> Callback for updating Barplot with Make as x
+ #----> Callback for updating Barplot with Make as x
 
 
 @app.callback(Output(
