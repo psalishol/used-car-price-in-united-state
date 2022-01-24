@@ -206,9 +206,8 @@ app.layout = html.Div(
 )
 
 
-# For the helper function in the accordance of that and that not in main branch of t
-# of the project
-
+# Helper function to be used for the interactive board
+#-----> 
 
 #----> Helper functions
 @app.callback(Output("model_text","children"),
@@ -308,25 +307,17 @@ def update_barplot_model(selected_make,selected_val):
     fig =px.bar(
             x=year,y=price, color=selected, title=f"{selected_make}")
     return fig
-
-
-
-
-
 # plotting the map chart for the dashboard 
 @app.callback(Output(component_id="",component_property=""),
               [Input(component_id="",component_property=""),
-               Input(component_id="",component_property=""),
-               Input(component_id="", component_property="")])
-def map_chart(selected_make,fir_selected,selected_sec):
-    
-    # Filtering the data by the selected make name
+               Input(component_id="",component_property="")])
+def make_mapbox(selected_make,first_sel,sec_selected):
     filtered_data = data_[data_["make_name"] == selected_make]
-    if data_[fir_selected].dtype == object or data_[selected_sec].dtype == object:
-        # input some more stuff here    
-            pass
 
-
+    if(filtered_data[first_sel].dtype == object or 
+       filtered_data[sec_selected].dtype == object):
+            raise ValueError("Input provided must be float or int type")
+    
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
 #               Input(component_id="dropdown_make",component_property="value"))
