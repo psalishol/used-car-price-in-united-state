@@ -317,7 +317,14 @@ def make_mapbox(selected_make,first_sel,sec_selected):
     if(filtered_data[first_sel].dtype == object or 
        filtered_data[sec_selected].dtype == object):
             raise ValueError("Input provided must be float or int type")
+
     
+# using the same sequence as the firstChild
+@app.callbakck(Output(component_id="",component_property=""),
+               Input(component_id="",component_property=""))
+def make_plot(selected_make,unnanmed_plot):
+    filtered_data = data_[data_["make_name"]==selected_make]
+    pass
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
 #               Input(component_id="dropdown_make",component_property="value"))
