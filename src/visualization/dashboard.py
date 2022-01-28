@@ -177,6 +177,37 @@ app.layout = html.Div(
             ],
             className="row"
         ),
+        
+        
+        html.Div(
+            [
+                
+                # Plotting the pieplot
+                html.Div(
+                    [
+                        html.Label("Compare map", id="map_compare"),
+                        dcc.Dropdown(
+                            id="select_compare_dropdown",
+                            options= [{"label": int(i), "value": int(i) } for i in 
+                                      sorted([feature for feature in data_.columns if data_[feature].dtype != (bool or object)], reverse=False)],
+                            value= None
+                            ),
+                        dcc.Graph(id="map_plot_chart")
+                    ],
+                    className="container first col"
+                ),
+
+                # Plotting the bar graph
+                html.Div(
+                    [
+                        dcc.Graph(id="barplot_graph")
+                    ],
+                    className="container second col"
+                ),
+            ],
+            className="row"
+        ),
+
     
         # For Displaying Geographical Location
         html.Div(
@@ -318,11 +349,16 @@ def make_mapbox(selected_make,first_sel,sec_selected):
        filtered_data[sec_selected].dtype == object):
             raise ValueError("Input provided must be float or int type")
 
-@app.callback(Output(component_id="",component_property=""),
-              Input(component_id="",component_property=""))
-def make_traces(selected_make):
+
+# There should be a dropdown just before the map chart for changing the value of the 
+# 
+@app.callback(Output(component_id="map_plot_chart",component_property="figure"),
+              [Input(component_id="select_compare_dropdown",component_property="children"),
+               Input(component_id="dropdown_make",component_property="children")])
+def make_traces(plot_compare,selected_make):
     filtered_data = data_[data_["make_name"] == selected_make]
-    
+    # using the most for the placeholder
+    fig = px.Scatterplot
 # using the same sequence as the firstChild
 
 #----> Callaback for updating satelite
