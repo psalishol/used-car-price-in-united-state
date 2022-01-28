@@ -355,11 +355,13 @@ def make_mapbox(selected_make,first_sel,sec_selected):
 @app.callback(Output(component_id="map_plot_chart",component_property="figure"),
               [Input(component_id="select_compare_dropdown",component_property="children"),
                Input(component_id="dropdown_make",component_property="children")])
-def make_traces(plot_compare,selected_make):
+def make_traces(plot_compare_x, plot_compare_y,selected_make):
     filtered_data = data_[data_["make_name"] == selected_make]
-    # using the most for the placeholder
-    fig = px.Scatterplot
-# using the same sequence as the firstChild
+    if plot_compare_x or plot_compare_y is None:
+        fig = px.scatter(data_frame=filtered_data, x="latitude",y="longitude")
+        return fig
+    fig = px.scatter(data_frame=filtered_data, x=plot_compare_x, y=plot_compare_y)
+    return fig
 
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
