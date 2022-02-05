@@ -351,7 +351,7 @@ def make_mapbox(selected_make,first_sel,sec_selected):
 
 
 # There should be a dropdown just before the map chart for changing the value of the 
-# 
+#
 @app.callback(Output(component_id="map_plot_chart",component_property="figure"),
               [Input(component_id="select_compare_dropdown",component_property="children"),
                Input(component_id="dropdown_make",component_property="children")])
