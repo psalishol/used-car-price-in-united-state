@@ -253,6 +253,7 @@ def update_avg_price(value):
 
 @app.callback(Output("avg_price_text","children"),
               [Input("dropdown_make","value")])
+
 def update_price_text(value):
     if value is None:
         return "0"
@@ -266,17 +267,17 @@ def update_price_text(value):
             return val[0:3]+","+val[3:]
         elif len(val) == 7:
             return val[0]+","+val[1:4]+","+val[4:]  
- 
-        
+         
 #----> Callback for Barplot for features
 
 @app.callback(Output("lineplot_graph","figure"),
               [Input("dropdown_make","value"),
                Input("dropdown_comp","value")]
               )
+#not in the sequential and that making it possible
 def update_barplot(selected_make,selected_comp):
     data_filtered = data_[data_["make_name"] == selected_make]
-    # If nothing is selected
+    # If nothing is selected return none
     if selected_comp == None:
         fig =px.bar(
         x=list(data_.groupby("transmission")["price"].mean().index), y=list(data_.groupby("transmission")["price"].mean().values))
@@ -315,7 +316,6 @@ def make_pie(selected_make,selected_comp, selected_year):
     fig = px.pie(data_frame=df, names="make",values="Price")    
     return fig
 
-
 #---> Callback for updating barplot with year and features
 
 @app.callback(Output(component_id="barplot_graph",component_property="figure"),
@@ -348,7 +348,6 @@ def make_mapbox(selected_make,first_sel,sec_selected):
     if(filtered_data[first_sel].dtype == object or 
        filtered_data[sec_selected].dtype == object):
             raise ValueError("Input provided must be float or int type")
-
 
 # There should be a dropdown just before the map chart for changing the value of the 
 #
