@@ -16,8 +16,6 @@ from dash.dependencies import Input, Output, State
 app = dash.Dash(__name__)
 server = app.server
 
-
-
 #--------- Loading the dataset ---------------#
 def concat_data(FILE_DIR):
     N_SAMPLE = len(os.listdir(FILE_DIR))
@@ -29,16 +27,18 @@ def concat_data(FILE_DIR):
     return data
 
 
+# using this as re
+
 ##------- Creating data for the dashboard ----------##
-FILEPATH = r"..\Data\Dashboard data"
+FILEPATH = "../data/Dashboard data"
 data_ = concat_data(FILEPATH)
 
 
 # Model list for the vehicle
 make_list = [feature for feature in sorted(list(data_["make_name"].unique()),reverse=False) 
                     if len(data_[data_["make_name"] == feature]) > 1000]
-#----> App layout
 
+#----> App layout
 app.layout = html.Div(
     [
         dcc.Store(id='aggregate_data'),
@@ -47,6 +47,7 @@ app.layout = html.Div(
                 html.Div(
                     [
                         html.H2("Value Insight", id="header-text"),
+        
         
                     ],
                 )
@@ -185,6 +186,9 @@ app.layout = html.Div(
 )
 
 
+# For the helper function in the accordance of that and that not in main branch of t
+# of the project
+
 
 #----> Helper functions
 @app.callback(Output("model_text","children"),
@@ -242,7 +246,6 @@ def update_barplot(selected_make,selected_comp):
                Input(component_id="select_year_dropdown", component_property="value")]
 )
 def make_pie(selected_make,selected_comp, selected_year):
-    
     # Making a filtered dataset
     data_filtered = data_[(data_["make_name"] == selected_make) & (data_["year"] == selected_year)]
     selected = []   # This would be our name for the pieplot
@@ -260,10 +263,9 @@ def make_pie(selected_make,selected_comp, selected_year):
         "Price": price_val
     }
     df = pd.DataFrame(data_l)
-        
     fig = px.pie(data_frame=df, names="make",values="Price")    
     return fig
-
+    
 
 #---> Callback for updating barplot with year and features
 
@@ -293,7 +295,7 @@ def update_barplot_model(selected_make,selected_val):
 
 #----> Callaback for updating satelite
 # @app.callback(Output(component_id="satelite_view",component_property="figure"),
-#               Input(component_id="dropdown_make",component_property="value"))
+            #   Input(component_id="dropdown_make",component_property="value"))
 # def update_satelite(selected_make):
     
 #     data_filtered = data_[data_['Vehicle Make'] == selected_make]
@@ -344,8 +346,9 @@ def update_barplot_model(selected_make,selected_val):
     
 #----> Callback for updating Barplot with Make as x
 
+
 @app.callback(Output(
-    component_id="make_price",component_property="figure"),
+    jjcomponent_id="make_price",component_property="figure"),
               Input(
                   component_id="dropdown_comp",component_property="value"
               ))
